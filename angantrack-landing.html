@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angrow — Smart Child Health Monitoring</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f8faf9;
+  color: #1a2e26;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ── CSS VARS ── */
+:root {
+  --green: #0e9f6e;
+  --green-dark: #0a7a55;
+  --green-light: #e6f7f1;
+  --green-mid: #c3edd9;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --text: #1a2e26;
+  --text-2: #4b6b5d;
+  --text-3: #8fada2;
+  --border: #d4e8df;
+  --bg: #f8faf9;
+  --bg-2: #ffffff;
+  --bg-3: #f0f7f4;
+  --radius: 12px;
+  --radius-lg: 20px;
+  --shadow: 0 2px 12px rgba(14,159,110,0.08);
+  --shadow-md: 0 4px 24px rgba(14,159,110,0.12);
+}
+
+/* ── TYPOGRAPHY ── */
+h1, h2, h3, h4, h5 { font-family: 'Manrope', sans-serif; line-height: 1.2; color: var(--text); }
+h1 { font-size: clamp(32px,5vw,52px); font-weight: 800; letter-spacing: -1.5px; }
+h2 { font-size: clamp(24px,3.5vw,38px); font-weight: 800; letter-spacing: -1px; }
+h3 { font-size: 20px; font-weight: 700; }
+h4 { font-size: 16px; font-weight: 700; }
+p { color: var(--text-2); font-size: 15px; line-height: 1.7; }
+
+/* ── LAYOUT HELPERS ── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.section-sm { padding: 64px 0; }
+.section-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 100px;
+  margin-bottom: 16px;
+}
+.section-tag svg { width: 13px; height: 13px; }
+.section-header { margin-bottom: 56px; }
+.section-header h2 { margin-bottom: 12px; }
+.section-header p { max-width: 540px; font-size: 16px; }
+.section-header.center { text-align: center; }
+.section-header.center p { margin: 0 auto; }
+
+/* ── PLACEHOLDER ── */
+.placeholder {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: #f5faf7;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px;
+  color: var(--text-3);
+  font-size: 13px; font-weight: 500;
+  text-align: center;
+  position: relative;
+  padding: 24px;
+}
+.placeholder-icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--green-light);
+  display: flex; align-items: center; justify-content: center;
+}
+.placeholder-icon svg { color: var(--green); }
+.placeholder-label {
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--green-dark);
+  background: var(--green-light);
+  padding: 3px 10px; border-radius: 100px;
+}
+
+/* ── BADGE ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.4px;
+}
+.badge-green { background: var(--green-light); color: var(--green-dark); }
+.badge-amber { background: var(--amber-light); color: #92400e; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(248,250,249,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 18px; color: var(--text);
+}
+.nav-logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--text-2); transition: color 0.2s; }
+.nav-links a:hover { color: var(--green); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 20px; border-radius: 9px;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--green); color: #fff; box-shadow: 0 2px 8px rgba(14,159,110,0.3); }
+.btn-primary:hover { background: var(--green-dark); box-shadow: 0 4px 16px rgba(14,159,110,0.4); transform: translateY(-1px); }
+.btn-outline { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+.btn-outline:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+.btn-lg { padding: 14px 28px; font-size: 15px; border-radius: 11px; }
+.btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* ── HERO ── */
+#hero {
+  background: linear-gradient(160deg, #e8f7f0 0%, #f8faf9 50%, #fff8ec 100%);
+  padding: 80px 0 0;
+  overflow: hidden;
+}
+.hero-inner {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 48px; align-items: center;
+}
+.hero-left { padding-bottom: 80px; }
+.hero-eyebrow { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  animation: livePulse 2s infinite;
+}
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(14,159,110,0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(14,159,110,0); }
+}
+.hero-eyebrow span { font-size: 13px; font-weight: 600; color: var(--green-dark); }
+.hero-left h1 { margin-bottom: 18px; }
+.hero-left p { font-size: 16px; max-width: 440px; margin-bottom: 32px; }
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+.hero-trust {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  padding-top: 28px; border-top: 1px solid var(--border);
+}
+.trust-item { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--text-2); }
+.trust-item svg { color: var(--green); flex-shrink: 0; }
+
+/* Hero right — project image placeholder */
+.hero-right {
+  position: relative;
+  align-self: flex-end;
+}
+.hero-img-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 20px 20px 0 0;
+  min-height: 340px;
+}
+.hero-stat-card {
+  position: absolute;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-md);
+  font-size: 12px;
+}
+.hero-stat-card strong { font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 800; display: block; line-height: 1; color: var(--text); }
+.hero-stat-card span { color: var(--text-3); font-weight: 500; font-size: 11px; }
+.stat-card-1 { bottom: 24px; left: -24px; }
+.stat-card-2 { top: 24px; right: -16px; }
+
+/* ── AWARDS STRIP ── */
+.awards-strip {
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 22px 0;
+}
+.awards-inner {
+  display: flex; align-items: center; gap: 40px;
+  overflow-x: auto; padding-bottom: 4px;
+}
+.awards-inner::-webkit-scrollbar { display: none; }
+.award-item {
+  display: flex; align-items: center; gap: 10px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.award-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--amber-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.award-text strong { display: block; font-size: 13px; font-weight: 700; color: var(--text); }
+.award-text span { font-size: 11px; color: var(--text-3); }
+.awards-divider { width: 1px; height: 32px; background: var(--border); flex-shrink: 0; }
+
+/* ── FEATURES ── */
+#features { background: #fff; }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.feature-cell {
+  background: #fff;
+  padding: 32px 28px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.feature-cell:hover { background: var(--bg-3); }
+.feature-cell:nth-child(3n) { border-right: none; }
+.feature-cell:nth-child(n+4) { border-bottom: none; }
+.feature-icon-wrap {
+  width: 44px; height: 44px; border-radius: 11px;
+  background: var(--green-light);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.feature-icon-wrap svg { color: var(--green); width: 22px; height: 22px; }
+.feature-cell h4 { margin-bottom: 8px; font-size: 15px; }
+.feature-cell p { font-size: 13px; line-height: 1.6; }
+
+/* ── PROJECT IMAGE ── */
+#project-image { background: var(--bg-3); }
+.project-img-layout {
+  display: grid; grid-template-columns: 5fr 4fr;
+  gap: 40px; align-items: center;
+}
+.project-img-main {
+  aspect-ratio: 16/10;
+  min-height: 300px;
+}
+.project-img-side { display: flex; flex-direction: column; gap: 20px; }
+.project-img-thumb {
+  aspect-ratio: 4/3;
+  min-height: 120px;
+}
+.project-img-info h3 { margin-bottom: 10px; }
+
+/* ── HOW IT WORKS ── */
+#how-it-works { background: #fff; }
+.steps-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: start;
+}
+.steps-list { display: flex; flex-direction: column; gap: 0; }
+.step-item {
+  display: flex; gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.step-item:last-child { border-bottom: none; }
+.step-item.active .step-num-wrap { background: var(--green); }
+.step-item.active .step-num-wrap span { color: #fff; }
+.step-num-wrap {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--bg-3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.2s;
+}
+.step-num-wrap span { font-family: 'Manrope', sans-serif; font-size: 15px; font-weight: 800; color: var(--text-3); transition: color 0.2s; }
+.step-content h4 { margin-bottom: 5px; }
+.step-content p { font-size: 13px; }
+.step-visual {
+  position: sticky; top: 88px;
+}
+.step-screen-placeholder {
+  aspect-ratio: 9/16;
+  max-width: 280px;
+  margin: 0 auto;
+  border-radius: 36px;
+  border: 8px solid #1a2e26;
+  min-height: 480px;
+  overflow: hidden;
+  position: relative;
+}
+.step-screen-placeholder::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 90px; height: 24px;
+  background: #1a2e26; border-radius: 0 0 14px 14px;
+  z-index: 2;
+}
+
+/* ── APP SCREENSHOTS (Play Store style) ── */
+#screenshots { background: var(--bg-3); }
+.screenshots-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; margin-bottom: 56px; }
+.download-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.store-btn {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--text); color: #fff;
+  padding: 12px 20px; border-radius: 11px;
+  font-size: 13px; max-width: 200px; transition: all 0.2s;
+}
+.store-btn:hover { background: #0f1f18; transform: translateY(-1px); }
+.store-btn .store-label { font-size: 10px; opacity: 0.7; display: block; }
+.store-btn .store-name { font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 15px; display: block; line-height: 1; }
+.store-btn svg { width: 24px; height: 24px; flex-shrink: 0; }
+
+/* Scrollable screenshot row */
+.screenshot-row {
+  display: flex; gap: 18px;
+  overflow-x: auto; padding-bottom: 16px;
+  scroll-snap-type: x mandatory;
+}
+.screenshot-row::-webkit-scrollbar { height: 4px; }
+.screenshot-row::-webkit-scrollbar-track { background: var(--border); border-radius: 2px; }
+.screenshot-row::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }
+.screenshot-item { flex-shrink: 0; scroll-snap-align: start; }
+.screenshot-phone {
+  width: 200px;
+  background: #fff;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  position: relative;
+}
+.phone-notch {
+  height: 20px; background: #1a2e26;
+  border-radius: 0 0 14px 14px;
+  width: 70px; margin: 0 auto;
+  position: relative; z-index: 2;
+}
+.screenshot-screen {
+  width: 100%;
+  aspect-ratio: 9/16;
+  background: #f5f5f5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px;
+  color: var(--text-3); font-size: 11px; font-weight: 600; text-align: center;
+  padding: 12px;
+}
+.screenshot-screen svg { width: 28px; height: 28px; color: var(--text-3); }
+.screenshot-label {
+  font-size: 12px; font-weight: 600; color: var(--text-2);
+  text-align: center; margin-top: 10px; padding: 0 8px;
+}
+/* Section row headings */
+.screen-section-title {
+  font-family: 'Manrope', sans-serif;
+  font-size: 15px; font-weight: 700; color: var(--text);
+  margin-bottom: 14px; margin-top: 36px;
+  display: flex; align-items: center; gap: 8px;
+}
+.screen-section-title:first-child { margin-top: 0; }
+.screen-divider {
+  width: 100%; height: 1px;
+  background: var(--border); margin: 32px 0;
+}
+
+/* ── HARDWARE SECTION ── */
+#hardware { background: #fff; }
+.hardware-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 56px; align-items: center;
+}
+.hardware-img-placeholder {
+  aspect-ratio: 4/3; min-height: 320px;
+}
+.hardware-specs { display: flex; flex-direction: column; gap: 16px; margin-top: 28px; }
+.spec-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px; border-radius: var(--radius);
+  background: var(--bg-3); border: 1px solid var(--border);
+}
+.spec-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: var(--green-light);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.spec-icon svg { color: var(--green); width: 18px; height: 18px; }
+.spec-text strong { display: block; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.spec-text span { font-size: 12px; color: var(--text-3); }
+
+/* ── DEMO VIDEO ── */
+#demo-video { background: var(--bg-3); }
+.video-layout { display: grid; grid-template-columns: 3fr 2fr; gap: 48px; align-items: center; }
+.video-placeholder {
+  aspect-ratio: 16/9;
+  min-height: 260px;
+  position: relative;
+}
+.video-play-btn {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 0 12px rgba(14,159,110,0.15);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s;
+}
+.video-play-btn:hover { background: var(--green-dark); transform: translate(-50%,-50%) scale(1.08); }
+.video-play-btn svg { color: #fff; width: 24px; height: 24px; margin-left: 3px; }
+.video-side h3 { margin-bottom: 12px; }
+.video-side p { font-size: 14px; margin-bottom: 20px; }
+.video-timestamps { display: flex; flex-direction: column; gap: 8px; }
+.timestamp-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff;
+  font-size: 13px; cursor: pointer; transition: all 0.2s;
+}
+.timestamp-item:hover { border-color: var(--green); background: var(--green-light); }
+.ts-time {
+  font-family: 'Manrope', sans-serif; font-weight: 700;
+  font-size: 11px; color: var(--green-dark);
+  background: var(--green-light); padding: 2px 8px;
+  border-radius: 5px; flex-shrink: 0;
+}
+
+/* ── IMPACT / STATS ── */
+#impact { background: var(--green); }
+#impact h2 { color: #fff; }
+#impact .section-tag { background: rgba(255,255,255,0.18); color: #fff; }
+.impact-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+}
+.impact-cell {
+  background: rgba(255,255,255,0.06);
+  padding: 36px 28px; text-align: center;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+.impact-cell:last-child { border-right: none; }
+.impact-number {
+  font-family: 'Manrope', sans-serif; font-size: 44px; font-weight: 800;
+  color: #fff; display: block; line-height: 1; margin-bottom: 8px;
+}
+.impact-label { font-size: 13px; color: rgba(255,255,255,0.65); font-weight: 500; }
+
+/* ── TEAM ── */
+#team { background: #fff; }
+.team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.team-card {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 28px 24px; text-align: center;
+  transition: all 0.25s;
+}
+.team-card:hover { border-color: var(--green); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.team-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--green-light); border: 3px solid var(--green-mid);
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Manrope', sans-serif; font-size: 22px; font-weight: 800;
+  color: var(--green-dark);
+}
+.team-card h4 { margin-bottom: 4px; }
+.team-role { font-size: 12px; color: var(--text-3); font-weight: 500; margin-bottom: 14px; }
+.team-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.team-tag {
+  font-size: 11px; font-weight: 600; color: var(--green-dark);
+  background: var(--green-light); border-radius: 100px;
+  padding: 3px 10px;
+}
+
+/* ── CONTACT / CTA FOOTER ── */
+#contact { background: var(--bg-3); border-top: 1px solid var(--border); }
+.contact-inner {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+}
+.contact-left h2 { margin-bottom: 14px; }
+.contact-form { display: flex; flex-direction: column; gap: 12px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-field {
+  display: flex; flex-direction: column; gap: 5px;
+}
+.form-field label { font-size: 12px; font-weight: 600; color: var(--text-2); }
+.form-field input, .form-field textarea, .form-field select {
+  padding: 11px 14px; border-radius: 9px;
+  border: 1.5px solid var(--border); background: #fff;
+  font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text);
+  outline: none; transition: border-color 0.2s;
+  width: 100%;
+}
+.form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+  border-color: var(--green);
+}
+.form-field textarea { resize: vertical; min-height: 96px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--text); color: rgba(255,255,255,0.6);
+  padding: 40px 0;
+}
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.footer-logo {
+  font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 18px; color: #fff;
+  display: flex; align-items: center; gap: 10px;
+}
+.footer-logo-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+}
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; transition: color 0.2s; }
+.footer-links a:hover { color: #fff; }
+.footer-copy { font-size: 12px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .hero-inner, .project-img-layout, .steps-layout,
+  .hardware-layout, .video-layout, .contact-inner,
+  .screenshots-intro { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .impact-grid { grid-template-columns: repeat(2, 1fr); }
+  .team-grid { grid-template-columns: 1fr 1fr; }
+  .hero-right { display: none; }
+  .step-visual { position: static; }
+}
+@media (max-width: 600px) {
+  .features-grid, .team-grid { grid-template-columns: 1fr; }
+  .impact-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  nav .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════ NAV ════════════════════════════════════ -->
+<nav>
+  <div class="container nav-inner">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">
+        <!-- Heart-pulse icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12h4l3-9 4 18 3-9h4"/>
+        </svg>
+      </div>
+      AnganTrack
+    </div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#screenshots">App</a></li>
+      <li><a href="#hardware">Hardware</a></li>
+      <li><a href="#demo-video">Demo</a></li>
+      <li><a href="#team">Team</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#contact" class="btn btn-outline">Contact</a>
+      <a href="#screenshots" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        Download App
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════ HERO ════════════════════════════════════ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- Left -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <div class="live-dot"></div>
+          <span>Hackathon Project · 2026</span>
+          <span class="badge badge-amber">🏆 Niral Thiruvizha </span>
+        </div>
+
+        <h1>Smart Child Health Monitoring for Rural India</h1>
+
+        <p>Angrow is an AI + IoT kiosk system that helps Anganwadi workers measure height, weight, and malnutrition risk automatically — offline-first, under 15 seconds per child.</p>
+
+        <div class="hero-ctas">
+          <a href="#demo-video" class="btn btn-primary btn-lg">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            Watch Demo
+          </a>
+          <a href="#screenshots" class="btn btn-outline btn-lg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            View App
+          </a>
+        </div>
+
+        <div class="hero-trust">
+          <div class="trust-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Offline-First
+          </div>
+          <div class="trust-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            WHO Z-Score AI
+          </div>
+          <div class="trust-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Parent Notifications
+          </div>
+          <div class="trust-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            ₹12,000 Per Kiosk
+          </div>
+        </div>
+      </div>
+
+      <!-- Right — Project Hero Image -->
+      <div class="hero-right">
+        <div class="placeholder hero-img-placeholder">
+          <div class="placeholder-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <div class="placeholder-label">PROJECT HERO IMAGE</div>
+          <p style="font-size:12px; max-width:220px;">Add your kiosk render, device photo, or project banner here. Recommended: 1200×900px</p>
+        </div>
+        <!-- Floating stat cards -->
+        <div class="hero-stat-card stat-card-1">
+          <strong>15s</strong>
+          <span>Scan to Result</span>
+        </div>
+        <div class="hero-stat-card stat-card-2">
+          <strong style="color:var(--green);">80M</strong>
+          <span>Children Tracked</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ AWARDS STRIP ════════════════════ -->
+<div class="awards-strip">
+  <div class="container">
+    <div class="awards-inner">
+      <div class="award-item">
+        <div class="award-icon">🏆</div>
+        <div class="award-text">
+          <strong>Niral Thiruvizha 2025</strong>
+          <span>Innovation Finalist</span>
+        </div>
+      </div>
+      <div class="awards-divider"></div>
+      <div class="award-item">
+        <div class="award-icon">🥇</div>
+        <div class="award-text">
+          <strong>Wadhwani Entrepreneurship</strong>
+          <span>Selected Project</span>
+        </div>
+      </div>
+      <div class="awards-divider"></div>
+      <div class="award-item">
+        <div class="award-icon">💡</div>
+        <div class="award-text">
+          <strong>Smart India Innovation</strong>
+          <span>Healthcare Category</span>
+        </div>
+      </div>
+      <div class="awards-divider"></div>
+      <div class="award-item">
+        <div class="award-icon">🌱</div>
+        <div class="award-text">
+          <strong>Rural Healthcare Award</strong>
+          <span>State Recognition</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ FEATURES ════════════════════ -->
+<section id="features" class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Key Features
+      </div>
+      <h2>Everything Anganwadi Workers Need</h2>
+      <p>Designed for real field conditions — low connectivity, limited training, maximum impact.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Row 1 -->
+      <div class="feature-cell">
+        <div class="feature-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <h4>QR-Based Child ID</h4>
+        <p>Each child gets a unique QR card. Workers scan in seconds — no typing, no errors, instant profile load.</p>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><path d="M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        </div>
+        <h4>Auto Weight Measurement</h4>
+        <p>HX711 load cell captures weight automatically. No manual entry, no human measurement error.</p>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <h4>WHO Z-Score AI</h4>
+        <p>AI engine calculates WHO-standard Z-scores in real time and flags malnutrition risk levels automatically.</p>
+      </div>
+      <!-- Row 2 -->
+      <div class="feature-cell">
+        <div class="feature-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        </div>
+        <h4>Height Tracking</h4>
+        <p>Ultrasonic HC-SR04 sensor measures standing height. Growth charts generated automatically over time.</p>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h4>Parent Notifications</h4>
+        <p>Firebase Cloud Messaging sends instant alerts to parents' Android app — in Tamil and local languages.</p>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z M8 2v16 M16 6v16"/></svg>
+        </div>
+        <h4>Offline-First Storage</h4>
+        <p>All data stored locally on ESP32. Batch syncs to cloud when connectivity resumes — no data ever lost.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ PROJECT IMAGE SECTION ════════════════════ -->
+<section id="project-image" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Project Photos
+      </div>
+      <h2>See AnganTrack in Action</h2>
+      <p>Hardware prototype, field deployment setup, and real-world testing environments.</p>
+    </div>
+
+    <div class="project-img-layout">
+      <div class="placeholder project-img-main">
+        <div class="placeholder-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div class="placeholder-label">MAIN PROJECT IMAGE</div>
+        <p style="font-size:12px; max-width:240px;">Full kiosk setup or hardware prototype. Recommended: 1600×1000px, landscape</p>
+      </div>
+
+      <div class="project-img-side">
+        <div class="placeholder project-img-thumb">
+          <div class="placeholder-label">CLOSE-UP PHOTO</div>
+          <p style="font-size:11px; max-width:160px;">Sensor or circuit detail</p>
+        </div>
+        <div class="placeholder project-img-thumb">
+          <div class="placeholder-label">FIELD PHOTO</div>
+          <p style="font-size:11px; max-width:160px;">Anganwadi center or QR scan demo</p>
+        </div>
+
+        <div class="project-img-info">
+          <h3>Hardware Prototype</h3>
+          <p style="font-size:14px;">Built on ESP32 with HX711 load cell, HC-SR04 ultrasonic height sensor, and QR scanner module. Operates entirely on a single power source with a rechargeable battery backup.</p>
+          <div style="display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;">
+            <span class="badge badge-green">ESP32 MCU</span>
+            <span class="badge badge-green">HX711 ADC</span>
+            <span class="badge badge-green">HC-SR04</span>
+            <span class="badge badge-amber">Prototype v1.2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ HOW IT WORKS ════════════════════ -->
+<section id="how-it-works" class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Workflow
+      </div>
+      <h2>How It Works — 5 Steps</h2>
+      <p>From QR scan to parent notification in under 15 seconds, even without internet.</p>
+    </div>
+
+    <div class="steps-layout">
+      <div class="steps-list">
+        <div class="step-item active">
+          <div class="step-num-wrap"><span>1</span></div>
+          <div class="step-content">
+            <h4>Scan Child QR Card</h4>
+            <p>Worker scans the child's unique QR code. Profile, previous measurements, and health history load instantly — even offline.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num-wrap"><span>2</span></div>
+          <div class="step-content">
+            <h4>Automatic Weight Capture</h4>
+            <p>Child stands on the kiosk platform. The HX711 load cell captures precise weight with 24-bit accuracy — no manual input.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num-wrap"><span>3</span></div>
+          <div class="step-content">
+            <h4>Height Measurement</h4>
+            <p>HC-SR04 ultrasonic sensor calculates standing height in real time. Combined with weight for BMI and Z-score.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num-wrap"><span>4</span></div>
+          <div class="step-content">
+            <h4>AI Analysis & Risk Flag</h4>
+            <p>Django backend computes WHO Z-scores. Red/yellow/green status assigned. Malnutrition alerts generated automatically.</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num-wrap"><span>5</span></div>
+          <div class="step-content">
+            <h4>Parent Notified + Cloud Sync</h4>
+            <p>Firebase pushes alert to parent's app instantly. When internet is available, all offline records sync to the dashboard.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step screen visual -->
+      <div class="step-visual">
+        <div class="step-screen-placeholder placeholder">
+          <div class="placeholder-icon" style="margin-top:24px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <div class="placeholder-label">APP SCREEN</div>
+          <p style="font-size:11px; max-width:160px; margin-bottom:24px;">Each workflow step will show the corresponding app screen here</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ APP SCREENSHOTS (Play Store style) ════════════════════ -->
+<section id="screenshots" class="section">
+  <div class="container">
+
+    <div class="screenshots-intro">
+      <div>
+        <div class="section-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          Android App
+        </div>
+        <h2>AnganTrack Parent App</h2>
+        <p style="font-size:15px; margin-top:10px;">Available for Android. Tamil-first interface with growth charts, vaccination reminders, health alerts, and real-time notifications. Designed for first-time smartphone users in rural India.</p>
+        <div class="download-buttons">
+          <a href="#" class="store-btn">
+            <!-- Google Play icon -->
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76a2 2 0 0 1-1.18-1.8V2.04a2 2 0 0 1 1.18-1.8l11.27 11.76L3.18 23.76zm13.09-6.83L4.31 23.28l9.27-9.66 2.69 3.31zm2.3-5.43c.39.2.64.6.64 1.02s-.25.82-.64 1.02l-2.35 1.35-2.99-3.12 2.99-3.12 2.35 1.85zM4.31.72l11.96 6.35-2.69 3.31L4.31.72z"/></svg>
+            <div>
+              <span class="store-label">Get it on</span>
+              <span class="store-name">Google Play</span>
+            </div>
+          </a>
+          <a href="#contact" class="btn btn-outline" style="max-width:200px; justify-content:center;">
+            Request APK
+          </a>
+        </div>
+      </div>
+      <div>
+        <div style="background:#fff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px;">
+          <div style="display:flex; gap:12px; align-items:center; margin-bottom:14px;">
+            <div style="width:44px;height:44px;border-radius:11px;background:var(--green);display:flex;align-items:center;justify-content:center;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+            </div>
+            <div>
+              <div style="font-weight:700;font-size:15px;">AnganTrack</div>
+              <div style="font-size:12px;color:var(--text-3);">Child Health Monitor · Free</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+            <span style="color:var(--amber);font-size:16px;">★★★★★</span>
+            <span style="font-size:13px;font-weight:700;">4.8</span>
+            <span style="font-size:12px;color:var(--text-3);">· Pilot users</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span class="badge badge-green">Health & Fitness</span>
+            <span class="badge badge-green">Tamil</span>
+            <span class="badge badge-amber">New</span>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text-3);">
+            Size: ~8 MB &nbsp;·&nbsp; Android 6.0+ &nbsp;·&nbsp; Offline capable
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── WORKER APP SCREENS ── -->
+    <div class="screen-section-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      Anganwadi Worker App — Screens
+    </div>
+
+    <div class="screenshot-row">
+      <!-- Screen 1 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            <div class="placeholder-label" style="font-size:10px;">SCREEN 1</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">QR Scan / Login Screen</div>
+          </div>
+        </div>
+        <div class="screenshot-label">QR Scan</div>
+      </div>
+
+      <!-- Screen 2 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <div class="placeholder-label" style="font-size:10px;">SCREEN 2</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Child Profile View</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Child Profile</div>
+      </div>
+
+      <!-- Screen 3 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><path d="M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            <div class="placeholder-label" style="font-size:10px;">SCREEN 3</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Live Measurement Screen</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Measurement</div>
+      </div>
+
+      <!-- Screen 4 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            <div class="placeholder-label" style="font-size:10px;">SCREEN 4</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Z-Score / AI Result</div>
+          </div>
+        </div>
+        <div class="screenshot-label">AI Result</div>
+      </div>
+
+      <!-- Screen 5 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <div class="placeholder-label" style="font-size:10px;">SCREEN 5</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">All Children Dashboard</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Dashboard</div>
+      </div>
+
+      <!-- Screen 6 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z M8 2v16 M16 6v16"/></svg>
+            <div class="placeholder-label" style="font-size:10px;">SCREEN 6</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Offline Sync Status</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Sync Status</div>
+      </div>
+    </div>
+
+    <div class="screen-divider"></div>
+
+    <!-- ── PARENT APP SCREENS ── -->
+    <div class="screen-section-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      Parent App — Screens
+    </div>
+
+    <div class="screenshot-row">
+      <!-- P-Screen 1 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen" style="background:#fffbf0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <div class="placeholder-label" style="font-size:10px;background:var(--amber-light);color:#92400e;">PARENT SCREEN 1</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Health Alert Notification</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Health Alert</div>
+      </div>
+
+      <!-- P-Screen 2 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen" style="background:#fffbf0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <div class="placeholder-label" style="font-size:10px;background:var(--amber-light);color:#92400e;">PARENT SCREEN 2</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Growth Chart View</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Growth Chart</div>
+      </div>
+
+      <!-- P-Screen 3 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen" style="background:#fffbf0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div class="placeholder-label" style="font-size:10px;background:var(--amber-light);color:#92400e;">PARENT SCREEN 3</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Vaccination Schedule</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Vaccination</div>
+      </div>
+
+      <!-- P-Screen 4 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen" style="background:#fffbf0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            <div class="placeholder-label" style="font-size:10px;background:var(--amber-light);color:#92400e;">PARENT SCREEN 4</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Nutrition Tips</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Nutrition Tips</div>
+      </div>
+
+      <!-- P-Screen 5 -->
+      <div class="screenshot-item">
+        <div class="screenshot-phone">
+          <div class="phone-notch"></div>
+          <div class="screenshot-screen" style="background:#fffbf0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <div class="placeholder-label" style="font-size:10px;background:var(--amber-light);color:#92400e;">PARENT SCREEN 5</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4;">Child Summary Card</div>
+          </div>
+        </div>
+        <div class="screenshot-label">Child Summary</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════ HARDWARE ════════════════════ -->
+<section id="hardware" class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Hardware
+      </div>
+      <h2>IoT Kiosk — Physical Prototype</h2>
+      <p>Built for under ₹12,000 per unit. Ruggedized for rural environments with battery backup.</p>
+    </div>
+
+    <div class="hardware-layout">
+      <div class="placeholder hardware-img-placeholder">
+        <div class="placeholder-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div class="placeholder-label">HARDWARE PROTOTYPE PHOTO</div>
+        <p style="font-size:12px; max-width:240px;">Add the kiosk enclosure photo, circuit board, or assembled device image. Recommended: 1200×900px</p>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:20px;">Technical Specifications</h3>
+        <div class="hardware-specs">
+          <div class="spec-row">
+            <div class="spec-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="spec-text">
+              <strong>Microcontroller — ESP32</strong>
+              <span>Dual-core 240 MHz, WiFi + Bluetooth, 4MB flash</span>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><path d="M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
+            </div>
+            <div class="spec-text">
+              <strong>Weight Sensor — HX711 + Load Cell</strong>
+              <span>24-bit ADC, ±0.1g precision, 0–150kg range</span>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 9.16a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 3.8 2.5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.34a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="spec-text">
+              <strong>Height Sensor — HC-SR04</strong>
+              <span>Ultrasonic, 2cm–400cm range, ±3mm accuracy</span>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            </div>
+            <div class="spec-text">
+              <strong>QR Reader Module</strong>
+              <span>Embedded camera with OpenCV QR decode</span>
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            </div>
+            <div class="spec-text">
+              <strong>Display — 3.5" TFT LCD</strong>
+              <span>Touch screen, real-time measurement display</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:20px; padding:16px; border-radius:var(--radius); background:var(--green-light); border:1px solid var(--green-mid);">
+          <div style="font-size:13px; font-weight:700; color:var(--green-dark); margin-bottom:4px;">💰 Total BOM Cost</div>
+          <div style="font-size:24px; font-family:'Manrope',sans-serif; font-weight:800; color:var(--green-dark);">₹11,800 – ₹12,500</div>
+          <div style="font-size:12px; color:var(--green-dark); opacity:0.7; margin-top:2px;">Per kiosk unit, including enclosure and assembly</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ DEMO VIDEO ════════════════════ -->
+<section id="demo-video" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Demo Video
+      </div>
+      <h2>Watch AnganTrack in Action</h2>
+    </div>
+
+    <div class="video-layout">
+      <div class="placeholder video-placeholder">
+        <div class="placeholder-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="placeholder-label">DEMO VIDEO</div>
+        <p style="font-size:12px; max-width:220px;">Embed YouTube link or upload MP4. Replace this block with a &lt;video&gt; or &lt;iframe&gt; tag.</p>
+        <div class="video-play-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      </div>
+
+      <div class="video-side">
+        <h3>Full System Demo</h3>
+        <p>A walkthrough of the complete AnganTrack workflow — from QR scan to parent notification — filmed at a pilot Anganwadi center.</p>
+        <div class="video-timestamps">
+          <div class="timestamp-item">
+            <span class="ts-time">0:00</span>
+            <span>Introduction & project overview</span>
+          </div>
+          <div class="timestamp-item">
+            <span class="ts-time">0:45</span>
+            <span>QR scan & child profile load</span>
+          </div>
+          <div class="timestamp-item">
+            <span class="ts-time">1:20</span>
+            <span>Live weight + height measurement</span>
+          </div>
+          <div class="timestamp-item">
+            <span class="ts-time">2:05</span>
+            <span>AI Z-score analysis result</span>
+          </div>
+          <div class="timestamp-item">
+            <span class="ts-time">2:40</span>
+            <span>Parent notification & app demo</span>
+          </div>
+          <div class="timestamp-item">
+            <span class="ts-time">3:15</span>
+            <span>Offline sync & cloud dashboard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ IMPACT ════════════════════ -->
+<section id="impact" class="section-sm" style="background:var(--green);">
+  <div class="container">
+    <div class="section-header center" style="margin-bottom:40px;">
+      <div class="section-tag">Our Impact</div>
+      <h2 style="color:#fff;">Built for Scale</h2>
+    </div>
+    <div class="impact-grid">
+      <div class="impact-cell">
+        <span class="impact-number">1.4M+</span>
+        <div class="impact-label">Anganwadi Centers in India</div>
+      </div>
+      <div class="impact-cell">
+        <span class="impact-number">80M</span>
+        <div class="impact-label">Children Enrolled Nationwide</div>
+      </div>
+      <div class="impact-cell">
+        <span class="impact-number">8 hrs</span>
+        <div class="impact-label">Saved Weekly Per Worker</div>
+      </div>
+      <div class="impact-cell">
+        <span class="impact-number">₹12K</span>
+        <div class="impact-label">Cost Per Kiosk Unit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ TEAM ════════════════════ -->
+<section id="team" class="section" style="background:#fff;">
+  <div class="container">
+    <div class="section-header center">
+      <div class="section-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Team
+      </div>
+      <h2>Meet the Builders</h2>
+      <p>A multidisciplinary team of engineers solving rural healthcare with technology.</p>
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar">DD</div>
+        <h4>Dhanushkumar D</h4>
+        <div class="team-role">Team Lead · IoT Developer</div>
+        <div class="team-tags">
+          <span class="team-tag">ESP32</span>
+          <span class="team-tag">Embedded</span>
+          <span class="team-tag">UI/UX</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">PM</div>
+        <h4>Priya Meenakshi</h4>
+        <div class="team-role">Backend Developer</div>
+        <div class="team-tags">
+          <span class="team-tag">Django</span>
+          <span class="team-tag">Firebase</span>
+          <span class="team-tag">REST API</span>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar">AK</div>
+        <h4>Arjun Kumar</h4>
+        <div class="team-role">Android Developer</div>
+        <div class="team-tags">
+          <span class="team-tag">Android</span>
+          <span class="team-tag">FCM</span>
+          <span class="team-tag">Tamil UI</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px; text-align:center;">
+      <div class="placeholder" style="max-width:600px; margin:0 auto; min-height:80px; flex-direction:row; gap:16px;">
+        <div class="placeholder-label">TEAM PHOTO</div>
+        <p style="font-size:12px; max-width:300px;">Replace with actual team photo. Recommended: 1200×600px, group shot</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ CONTACT ════════════════════ -->
+<section id="contact" class="section">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <div class="section-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Contact
+        </div>
+        <h2>Request a Demo or Collaboration</h2>
+        <p style="font-size:15px; margin-top:12px; margin-bottom:24px;">Interested in deploying AnganTrack in your district, partnering for research, or supporting rural healthcare innovation? Reach out.</p>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:500; color:var(--text-2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            team@angantrack.in
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:500; color:var(--text-2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Tamil Nadu, India
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; font-size:14px; font-weight:500; color:var(--text-2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            github.com/angantrack
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <form class="contact-form" onsubmit="return false;">
+          <div class="form-row">
+            <div class="form-field">
+              <label>First Name</label>
+              <input type="text" placeholder="Rajesh">
+            </div>
+            <div class="form-field">
+              <label>Last Name</label>
+              <input type="text" placeholder="Kumar">
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Email Address</label>
+            <input type="email" placeholder="you@example.com">
+          </div>
+          <div class="form-field">
+            <label>Organization / Institution</label>
+            <input type="text" placeholder="Health Department / College / NGO">
+          </div>
+          <div class="form-field">
+            <label>Purpose</label>
+            <select>
+              <option value="">Select purpose…</option>
+              <option>Request Live Demo</option>
+              <option>Research Collaboration</option>
+              <option>Government / NGO Partnership</option>
+              <option>Investor Inquiry</option>
+              <option>Media / Press</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Message</label>
+            <textarea placeholder="Tell us about your interest in AnganTrack…"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%; justify-content:center;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════ FOOTER ════════════════════ -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-logo">
+      <div class="footer-logo-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+      </div>
+      AnganTrack
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#screenshots">App</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#team">Team</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="footer-copy">© 2025 AnganTrack Team · Hackathon Project</div>
+  </div>
+</footer>
+
+<script>
+  // Active step highlight
+  const steps = document.querySelectorAll('.step-item');
+  steps.forEach((step, i) => {
+    step.addEventListener('click', () => {
+      steps.forEach(s => s.classList.remove('active'));
+      step.classList.add('active');
+    });
+  });
+
+  // Smooth active step on scroll
+  const stepSection = document.getElementById('how-it-works');
+
+  // Sticky nav shadow on scroll
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    nav.style.boxShadow = window.scrollY > 10 ? '0 2px 20px rgba(0,0,0,0.06)' : 'none';
+  });
+</script>
+</body>
+</html>
